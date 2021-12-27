@@ -1,6 +1,9 @@
 # IntelliJ Idea files
 .idea/
 
+# target directory - build, test, run
+target/
+
 # Compiled class file
 *.class
 

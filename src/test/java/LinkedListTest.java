@@ -83,7 +83,7 @@ class LinkedListTest {
 
         Assertions.assertEquals(3, index);
 //        Assertions.assertThrows(IndexOutOfRangeException.class, () -> linkedListIterator.next());
-        Assertions.assertEquals(null, linkedListIterator.next());
+        Assertions.assertNull(linkedListIterator.next());
     }
 
     @Test

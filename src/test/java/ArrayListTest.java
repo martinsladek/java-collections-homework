@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ArrayListTest {
     ArrayList<String> arrayList = new ArrayList<>();
 
@@ -93,7 +91,7 @@ class ArrayListTest {
         }
 
         Assertions.assertEquals(3, index);
-        Assertions.assertThrows(IndexOutOfRangeException.class, () -> arrayListIterator.next());
+        Assertions.assertThrows(IndexOutOfRangeException.class, arrayListIterator::next);
 //        Assertions.assertEquals(null, arrayListIterator.next());
     }
 }

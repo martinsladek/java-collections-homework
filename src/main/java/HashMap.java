@@ -1,25 +1,28 @@
 import java.util.Iterator;
 
 public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
-    public static int DEFAULT_INIT_SIZE = 10;
-    public static double DEFAULT_SIZE_MULTIPLICATOR = 1.5;
-    int size = 0;
-    double sizeMultiplicator = DEFAULT_SIZE_MULTIPLICATOR;
-    int totalItemsCount = 0;
+    public static final int DEFAULT_INIT_CAPACITY = 16;
+    public static final double DEFAULT_CAPACITY_MULTIPLICATOR = 2.0;
+    public static final double DEFAULT_LOAD_FACTOR = 0.75;
+
+    int capacity = 0; // number of buckets
+    double capacityMultiplicator = DEFAULT_CAPACITY_MULTIPLICATOR;
+    int size = 0; // number of elements
+    double loadFactor = DEFAULT_LOAD_FACTOR;
     ArrayList<LinkedList<HashMapItem<Key, Value>>> buckets;
 
-    public HashMap(int size) {
-        this.size = size;
-        buckets = new ArrayList<>(size);
+    public HashMap(int capacity) {
+        this.capacity = capacity;
+        buckets = new ArrayList<>(capacity);
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < capacity; i++) {
             LinkedList<HashMapItem<Key, Value>> bucket = new LinkedList<>();
             buckets.add(bucket);
         }
     }
 
     public HashMap() {
-        this(DEFAULT_INIT_SIZE);
+        this(DEFAULT_INIT_CAPACITY);
     }
 
     public void add(Key key, Value value) {
@@ -27,8 +30,10 @@ public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
             throw new NullPointerException("Cannot add null key");
         }
 
+        checkCapacity();
+
         getBucket(key).add(new HashMapItem(key, value));
-        totalItemsCount++;
+        size++;
     }
 
     public Value get(Key key) {
@@ -40,17 +45,12 @@ public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
     }
 
     protected int getBucketId(Key key) {
-        return key.hashCode() % size;
+        return Math.abs(key.hashCode()) % capacity;
     }
 
     protected LinkedList<HashMapItem<Key, Value>> getBucket(Key key) {
         int position = getBucketId(key);
         LinkedList<HashMapItem<Key, Value>> foundBucket = buckets.get(position);
-
-//        if (foundBucket == null) {
-//            foundBucket = new LinkedList<>();
-//            buckets.set(position, foundBucket);
-//        }
 
         return foundBucket;
     }
@@ -73,8 +73,9 @@ public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
 
             if (hashMapItem.key == key) {
                 if (remove) {
-                    totalItemsCount--;
-                    it.remove();
+                    size--;
+                    ((LinkedListIterator)it).removeIterated();
+//                    it.remove();
                 }
 
                 return hashMapItem.value;
@@ -89,12 +90,16 @@ public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
         return new HashMapIterator(this);
     }
 
-    void resize() {
-        resize((int) (size * sizeMultiplicator));
+    int checkCapacity() {
+        if (size + 1 > capacity * loadFactor) {
+            changeCapacity((int) (capacity * capacityMultiplicator));
+        }
+
+        return capacity;
     }
 
-    void resize(int newSize) {
-        HashMap other = new HashMap<Key, Value>(newSize);
+    void changeCapacity(int capacity) {
+        HashMap other = new HashMap<Key, Value>(capacity);
 
         for (LinkedList<HashMapItem<Key, Value>> bucket : buckets) {
             for (HashMapItem<Key, Value> hashMapItem : bucket) {
@@ -103,6 +108,27 @@ public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
         }
 
         buckets = other.buckets;
+        this.capacity = capacity;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public double getLoadFactor () {
+        return loadFactor;
+    }
+
+    public void setLoadFactor (double loadFactor) {
+        this.loadFactor = loadFactor;
+    }
+
+    public double getCapacityMultiplicator () {
+        return capacityMultiplicator;
+    }
+
+    public void setCapacityMultiplicator(double capacityMultiplicator) {
+        this.capacityMultiplicator = capacityMultiplicator;
     }
 }
 
@@ -118,14 +144,12 @@ class HashMapItem<Key, Value> {
 
 class HashMapIterator<Key, Value> implements Iterator <HashMapItem> {
     HashMap<Key, Value> hashMap;
-//    ArrayList<LinkedList<HashMapItem<Key, Value>>> buckets;
     Iterator<LinkedList<HashMapItem<Key, Value>>> bucketsIterator;
     Iterator<HashMapItem<Key, Value>> linkedListIterator = null;
     int iterationPosition = 0;
 
     HashMapIterator(HashMap<Key, Value> hashMap) {
         this.hashMap = hashMap;
-//        this.buckets = hashMap.buckets;
         bucketsIterator = hashMap.buckets.iterator();
 
         if(bucketsIterator.hasNext()) {
@@ -135,7 +159,7 @@ class HashMapIterator<Key, Value> implements Iterator <HashMapItem> {
 
     @Override
     public boolean hasNext() {
-        if (iterationPosition < hashMap.size) {
+        if (iterationPosition < hashMap.size()) {
             return true;
         } else {
             return false;
@@ -150,6 +174,7 @@ class HashMapIterator<Key, Value> implements Iterator <HashMapItem> {
 
         while (true) {
             if (linkedListIterator.hasNext()) {
+                iterationPosition++;
                 return linkedListIterator.next();
             } else if(bucketsIterator.hasNext()) {
                 linkedListIterator = bucketsIterator.next().iterator();
@@ -162,7 +187,8 @@ class HashMapIterator<Key, Value> implements Iterator <HashMapItem> {
     @Override
     public void remove() {
         if (linkedListIterator != null) {
-            linkedListIterator.remove();
+            ((LinkedListIterator)linkedListIterator).removeIterated();
+//            linkedListIterator.remove();
         }
     }
 }

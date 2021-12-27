@@ -135,11 +135,13 @@ class LinkedListItem<Entity> {
 
 class LinkedListIterator <Entity> implements Iterator<Entity> {
 	LinkedList<Entity> linkedList;
+	LinkedListItem<Entity> lastObtained;
 	LinkedListItem<Entity> next;
 	int iterationPosition = 0;
 
 	LinkedListIterator(LinkedList<Entity> linkedList) {
 		this.linkedList = linkedList;
+		lastObtained = null;
 		next = linkedList.first;
 		iterationPosition = 0;
 	}
@@ -156,20 +158,18 @@ class LinkedListIterator <Entity> implements Iterator<Entity> {
 	@Override
 	public Entity next() {
 		if (next == null) {
+			lastObtained = null;
 			return null;
 		}
 
+		lastObtained = next;
 		LinkedListItem<Entity> current = next;
 		next = next.next;
 		return current.value;
 	}
 
-	@Override
-	public void remove() {
-		try {
-			linkedList.removeItem(next);
-		} catch (IndexOutOfRangeException e) {
-			e.printStackTrace();
-		}
+//	@Override
+	public void removeIterated() {
+		linkedList.removeItem(lastObtained);
 	}
 }

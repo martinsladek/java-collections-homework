@@ -37,7 +37,9 @@ class HashMapTest {
 
     @Test
     void remove() {
-        hashMap.remove("two");
+        String removed = hashMap.remove("two");
+
+        Assertions.assertEquals("2", removed);
 
         Assertions.assertNull(hashMap.get("two"));
         Assertions.assertEquals("1", hashMap.get("one"));

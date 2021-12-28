@@ -86,7 +86,7 @@ public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
 
     @Override
     public Iterator<HashMapItem<Key, Value>> iterator() {
-        return new HashMapIterator(this);
+        return new HashMapIterator<>(this);
     }
 
     int checkCapacity() {
@@ -98,7 +98,7 @@ public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
     }
 
     void changeCapacity(int capacity) {
-        HashMap other = new HashMap<Key, Value>(capacity);
+        HashMap<Key, Value> other = new HashMap<>(capacity);
 
         for (LinkedList<HashMapItem<Key, Value>> bucket : buckets) {
             for (HashMapItem<Key, Value> hashMapItem : bucket) {
@@ -141,7 +141,7 @@ class HashMapItem<Key, Value> {
     }
 }
 
-class HashMapIterator<Key, Value> implements Iterator <HashMapItem> {
+class HashMapIterator<Key, Value> implements Iterator <HashMapItem<Key, Value>> {
     HashMap<Key, Value> hashMap;
     Iterator<LinkedList<HashMapItem<Key, Value>>> bucketsIterator;
     Iterator<HashMapItem<Key, Value>> linkedListIterator = null;
@@ -166,7 +166,7 @@ class HashMapIterator<Key, Value> implements Iterator <HashMapItem> {
     }
 
     @Override
-    public HashMapItem next() {
+    public HashMapItem<Key, Value> next() {
         if (linkedListIterator == null) {
             return null;
         }
@@ -186,7 +186,7 @@ class HashMapIterator<Key, Value> implements Iterator <HashMapItem> {
     @Override
     public void remove() {
         if (linkedListIterator != null) {
-            ((LinkedListIterator)linkedListIterator).removeIterated();
+            ((LinkedListIterator<HashMapItem<Key, Value>>)linkedListIterator).removeIterated();
 //            linkedListIterator.remove();
         }
     }

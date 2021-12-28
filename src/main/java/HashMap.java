@@ -5,14 +5,15 @@ public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
     public static final double DEFAULT_CAPACITY_MULTIPLICATOR = 2.0;
     public static final double DEFAULT_LOAD_FACTOR = 0.75;
 
-    int capacity = 0; // number of buckets
+    int capacity; // number of buckets
     double capacityMultiplicator = DEFAULT_CAPACITY_MULTIPLICATOR;
-    int size = 0; // number of elements
+    int size; // number of elements
     double loadFactor = DEFAULT_LOAD_FACTOR;
     ArrayList<LinkedList<HashMapItem<Key, Value>>> buckets;
 
     public HashMap(int capacity) {
         this.capacity = capacity;
+        this.size = 0;
         buckets = new ArrayList<>(capacity);
 
         for (int i = 0; i < capacity; i++) {
@@ -32,7 +33,7 @@ public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
 
         checkCapacity();
 
-        getBucket(key).add(new HashMapItem(key, value));
+        getBucket(key).add(new HashMapItem<>(key, value));
         size++;
     }
 
@@ -50,9 +51,7 @@ public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
 
     protected LinkedList<HashMapItem<Key, Value>> getBucket(Key key) {
         int position = getBucketId(key);
-        LinkedList<HashMapItem<Key, Value>> foundBucket = buckets.get(position);
-
-        return foundBucket;
+        return buckets.get(position);
     }
 
     protected Value getValue(Key key, boolean remove) {
@@ -74,7 +73,7 @@ public class HashMap<Key, Value> implements Iterable<HashMapItem<Key, Value>> {
             if (hashMapItem.key == key) {
                 if (remove) {
                     size--;
-                    ((LinkedListIterator)it).removeIterated();
+                    ((LinkedListIterator<HashMapItem<Key, Value>>)it).removeIterated();
 //                    it.remove();
                 }
 

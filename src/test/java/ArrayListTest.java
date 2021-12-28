@@ -57,7 +57,8 @@ class ArrayListTest {
 
     @Test
     void remove() {
-        arrayList.remove(1);
+        String removed = arrayList.remove(1);
+        Assertions.assertEquals("two", removed);
         Assertions.assertEquals("three", arrayList.get(1));
     }
 

@@ -22,8 +22,9 @@ class LinkedListTest {
 
     @Test
     void add() {
-        linkedList.add("four");
+        String added = linkedList.add("four");
 
+        Assertions.assertEquals("four", added);
         Assertions.assertEquals("four", linkedList.get(3), "'four' expected at fourth position (position number [3])");
         Assertions.assertThrows(IndexOutOfRangeException.class, () -> linkedList.get(4));
     }
@@ -91,7 +92,9 @@ class LinkedListTest {
         LinkedList<String> otherLinkedList = new LinkedList<>();
         otherLinkedList.add("fourth");
 
-        linkedList.addAll(otherLinkedList);
+        LinkedList<String> added = linkedList.addAll(otherLinkedList);
+
+        Assertions.assertEquals(linkedList, added);
 
         Assertions.assertEquals("three", linkedList.get(2));
         Assertions.assertEquals("fourth", linkedList.get(3));

@@ -1,5 +1,5 @@
 public class IndexOutOfRangeException extends RuntimeException {
-    public String message = "";
+    public String message;
 
     public IndexOutOfRangeException (String message) {
         this.message = message;

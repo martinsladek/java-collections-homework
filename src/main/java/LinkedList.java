@@ -102,12 +102,7 @@ public class LinkedList<Entity> implements Iterable<Entity> {
 
 	@Override
 	public Iterator<Entity> iterator() {
-		return new LinkedListIterator(this);
-	}
-
-	@Override
-	public LinkedList<Entity> clone() {
-		return null;
+		return new LinkedListIterator<>(this);
 	}
 
 	public LinkedList<Entity> addAll(LinkedList<Entity> linkedList) {
@@ -137,7 +132,7 @@ class LinkedListIterator <Entity> implements Iterator<Entity> {
 	LinkedList<Entity> linkedList;
 	LinkedListItem<Entity> lastObtained;
 	LinkedListItem<Entity> next;
-	int iterationPosition = 0;
+	int iterationPosition;
 
 	LinkedListIterator(LinkedList<Entity> linkedList) {
 		this.linkedList = linkedList;

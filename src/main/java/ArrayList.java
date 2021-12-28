@@ -3,8 +3,8 @@ import java.util.Iterator;
 public class ArrayList <Entity> implements Iterable<Entity> {
 	public static int DEFAULT_INIT_CAPACITY = 10;
 	Object [] array;
-	int size = 0;
-	int capacity = 0;
+	int size;
+	int capacity;
 	double resizeMultiplier = 1.5;
 
 	public ArrayList () {
@@ -106,7 +106,7 @@ public class ArrayList <Entity> implements Iterable<Entity> {
 
 	@Override
 	public Iterator<Entity> iterator() {
-		return new ArrayListIterator(this);
+		return new ArrayListIterator<>(this);
 	}
 }
 
